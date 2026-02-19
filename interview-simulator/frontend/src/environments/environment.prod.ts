@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://interview-simulator-api.up.railway.app/api',
+  apiUrl: 'https://intervia-api.onrender.com/api',
   appName: 'Interview Simulator',
 };

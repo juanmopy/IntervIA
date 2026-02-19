@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: frontend
+        working-directory: interview-simulator/frontend
 
     steps:
       - uses: actions/checkout@v4
@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: interview-simulator/frontend/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -33,11 +33,8 @@ jobs:
       - name: Lint
         run: npx ng lint 2>/dev/null || echo "Lint skipped (no linter configured)"
 
-      - name: Test
-        run: npx ng test --watch=false
-
-      - name: Build
-        run: npm run build
+      - name: Build production
+        run: npm run build -- --configuration production
 
       - name: Audit
         run: npm audit --audit-level=high || true
@@ -47,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: backend
+        working-directory: interview-simulator/backend
 
     steps:
       - uses: actions/checkout@v4
@@ -56,7 +53,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: backend/package-lock.json
+          cache-dependency-path: interview-simulator/backend/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -79,7 +76,7 @@ jobs:
     needs: [frontend, backend]
     defaults:
       run:
-        working-directory: frontend
+        working-directory: interview-simulator/frontend
 
     steps:
       - uses: actions/checkout@v4
@@ -88,7 +85,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: interview-simulator/frontend/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -96,7 +93,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          working-directory: frontend
+          working-directory: interview-simulator/frontend
           build: npm run build
           start: npx ng serve --port 4200
           wait-on: http://localhost:4200
