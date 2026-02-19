@@ -1,0 +1,43 @@
+services:
+  # ── Backend API (NestJS) ───────────────────────────────
+  - type: web
+    name: intervia-api
+    runtime: node
+    region: oregon
+    plan: free
+    rootDir: interview-simulator/backend
+    buildCommand: npm ci && npm run build
+    startCommand: node dist/main.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: OPENROUTER_MODEL
+        value: deepseek/deepseek-r1
+      - key: CORS_ORIGIN
+        value: https://intervia-web.onrender.com
+
+  # ── Frontend (Angular static site) ─────────────────────
+  - type: web
+    name: intervia-web
+    runtime: static
+    region: oregon
+    plan: free
+    rootDir: interview-simulator/frontend
+    buildCommand: npm ci && npm run build -- --configuration production
+    staticPublishPath: dist/frontend/browser
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
