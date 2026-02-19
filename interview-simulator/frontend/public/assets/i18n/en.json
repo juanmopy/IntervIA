@@ -1,0 +1,70 @@
+{
+  "NAV": {
+    "HOME": "Home",
+    "INTERVIEW": "Interview",
+    "HISTORY": "History"
+  },
+  "HOME": {
+    "BADGE": "AI-Powered Interview Practice",
+    "TITLE": "Practice Job Interviews",
+    "TITLE_HIGHLIGHT": "with a 3D AI Interviewer",
+    "DESCRIPTION": "Get real-time feedback on your interview skills with our AI-powered simulator. Practice technical, behavioral, and mixed interviews with a realistic 3D avatar.",
+    "START": "Start Interview"
+  },
+  "CONFIG": {
+    "TITLE": "Configure Your Interview",
+    "ROLE_LABEL": "Job Role",
+    "ROLE_PLACEHOLDER": "e.g. Frontend Developer",
+    "ROLE_REQUIRED": "Job role is required",
+    "TYPE_LABEL": "Interview Type",
+    "TYPE_TECHNICAL": "Technical",
+    "TYPE_BEHAVIORAL": "Behavioral",
+    "TYPE_MIXED": "Mixed",
+    "DIFFICULTY_LABEL": "Difficulty",
+    "DIFFICULTY_JUNIOR": "Junior",
+    "DIFFICULTY_MID": "Mid",
+    "DIFFICULTY_SENIOR": "Senior",
+    "LANGUAGE_LABEL": "Language",
+    "QUESTIONS_LABEL": "Number of Questions",
+    "RESUME_LABEL": "Resume / CV Text",
+    "RESUME_PLACEHOLDER": "Paste your resume text here (optional)",
+    "JOB_DESC_LABEL": "Job Description",
+    "JOB_DESC_PLACEHOLDER": "Paste the job description here (optional)",
+    "SUBMIT": "Start Interview"
+  },
+  "INTERVIEW": {
+    "QUESTION_PROGRESS": "Question {{current}} of {{total}}",
+    "PHASE": "Phase",
+    "SEND": "Send",
+    "END_INTERVIEW": "End Interview",
+    "PLACEHOLDER": "Type your answer...",
+    "WEBGL_FALLBACK": "3D avatar not available. Using text-only mode.",
+    "LOADING": "Loading avatar..."
+  },
+  "REPORT": {
+    "TITLE": "Interview Report",
+    "OVERALL_SCORE": "Overall Score",
+    "STRENGTHS": "Strengths",
+    "IMPROVEMENTS": "Areas for Improvement",
+    "QUESTION_BREAKDOWN": "Question Breakdown",
+    "SCORE": "Score",
+    "FEEDBACK": "Feedback",
+    "RESOURCES": "Suggested Resources",
+    "TRY_AGAIN": "Try Again",
+    "DOWNLOAD_PDF": "Download PDF",
+    "NO_REPORT": "No report available. Complete an interview first."
+  },
+  "HISTORY": {
+    "TITLE": "Interview History",
+    "EMPTY": "No interviews yet. Start your first interview!",
+    "CLEAR_ALL": "Clear All",
+    "CONFIRM_CLEAR": "Confirm Clear",
+    "DELETE": "Delete",
+    "SCORE": "Score"
+  },
+  "THEME": {
+    "TOGGLE": "Toggle theme",
+    "LIGHT": "Light",
+    "DARK": "Dark"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "NAV": {
+    "HOME": "Inicio",
+    "INTERVIEW": "Entrevista",
+    "HISTORY": "Historial"
+  },
+  "HOME": {
+    "BADGE": "Práctica de Entrevistas con IA",
+    "TITLE": "Practica Entrevistas de Trabajo",
+    "TITLE_HIGHLIGHT": "con un Entrevistador 3D con IA",
+    "DESCRIPTION": "Obtén retroalimentación en tiempo real sobre tus habilidades de entrevista con nuestro simulador impulsado por IA. Practica entrevistas técnicas, conductuales y mixtas con un avatar 3D realista.",
+    "START": "Iniciar Entrevista"
+  },
+  "CONFIG": {
+    "TITLE": "Configura Tu Entrevista",
+    "ROLE_LABEL": "Puesto de Trabajo",
+    "ROLE_PLACEHOLDER": "ej. Desarrollador Frontend",
+    "ROLE_REQUIRED": "El puesto de trabajo es obligatorio",
+    "TYPE_LABEL": "Tipo de Entrevista",
+    "TYPE_TECHNICAL": "Técnica",
+    "TYPE_BEHAVIORAL": "Conductual",
+    "TYPE_MIXED": "Mixta",
+    "DIFFICULTY_LABEL": "Dificultad",
+    "DIFFICULTY_JUNIOR": "Junior",
+    "DIFFICULTY_MID": "Mid",
+    "DIFFICULTY_SENIOR": "Senior",
+    "LANGUAGE_LABEL": "Idioma",
+    "QUESTIONS_LABEL": "Número de Preguntas",
+    "RESUME_LABEL": "Texto del Currículum / CV",
+    "RESUME_PLACEHOLDER": "Pega el texto de tu currículum aquí (opcional)",
+    "JOB_DESC_LABEL": "Descripción del Puesto",
+    "JOB_DESC_PLACEHOLDER": "Pega la descripción del puesto aquí (opcional)",
+    "SUBMIT": "Iniciar Entrevista"
+  },
+  "INTERVIEW": {
+    "QUESTION_PROGRESS": "Pregunta {{current}} de {{total}}",
+    "PHASE": "Fase",
+    "SEND": "Enviar",
+    "END_INTERVIEW": "Terminar Entrevista",
+    "PLACEHOLDER": "Escribe tu respuesta...",
+    "WEBGL_FALLBACK": "Avatar 3D no disponible. Usando modo solo texto.",
+    "LOADING": "Cargando avatar..."
+  },
+  "REPORT": {
+    "TITLE": "Reporte de Entrevista",
+    "OVERALL_SCORE": "Puntuación General",
+    "STRENGTHS": "Fortalezas",
+    "IMPROVEMENTS": "Áreas de Mejora",
+    "QUESTION_BREAKDOWN": "Desglose por Pregunta",
+    "SCORE": "Puntuación",
+    "FEEDBACK": "Retroalimentación",
+    "RESOURCES": "Recursos Sugeridos",
+    "TRY_AGAIN": "Intentar de Nuevo",
+    "DOWNLOAD_PDF": "Descargar PDF",
+    "NO_REPORT": "No hay reporte disponible. Completa una entrevista primero."
+  },
+  "HISTORY": {
+    "TITLE": "Historial de Entrevistas",
+    "EMPTY": "Aún no tienes entrevistas. ¡Inicia tu primera entrevista!",
+    "CLEAR_ALL": "Borrar Todo",
+    "CONFIRM_CLEAR": "Confirmar Borrado",
+    "DELETE": "Eliminar",
+    "SCORE": "Puntuación"
+  },
+  "THEME": {
+    "TOGGLE": "Cambiar tema",
+    "LIGHT": "Claro",
+    "DARK": "Oscuro"
+  }
+}

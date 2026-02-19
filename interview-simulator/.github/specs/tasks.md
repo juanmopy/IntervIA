@@ -17,8 +17,9 @@
 6. Create root `README.md` with project overview
 **Verify**: `tree -L 3` shows correct structure; `git status` clean after initial commit.
 
-### T0.2 — Scaffold Angular Frontend (3 SP)
+### T0.2 — Scaffold Angular Frontend (3 SP) ✅
 **Context**: Create Angular 19+ app with standalone components.
+**Status**: **DONE**
 **Actions**:
 1. `npx @angular/cli@latest new frontend --style=scss --routing --standalone --ssr=false`
 2. Install Tailwind CSS 4: `npm i -D tailwindcss @tailwindcss/postcss postcss`
@@ -28,8 +29,9 @@
 6. Add `environments/` with `environment.ts` and `environment.prod.ts`
 **Verify**: `ng serve` runs; Tailwind classes render; path aliases resolve.
 
-### T0.3 — Scaffold NestJS Backend (2 SP)
+### T0.3 — Scaffold NestJS Backend (2 SP) ✅
 **Context**: Create NestJS API for proxying OpenRouter and TTS calls.
+**Status**: **DONE**
 **Actions**:
 1. `npx @nestjs/cli new backend`
 2. Install deps: `@nestjs/config`, `@nestjs/throttler`, `class-validator`, `class-transformer`
@@ -43,8 +45,9 @@
 
 ## Phase 1 · Core AI Integration (18 SP)
 
-### T1.1 — OpenRouter Service (5 SP)
+### T1.1 — OpenRouter Service (5 SP) ✅
 **Context**: Backend service to communicate with Arcee AI Trinity via OpenRouter.
+**Status**: **DONE**
 **Actions**:
 1. Create `openrouter/openrouter.module.ts` and `openrouter/openrouter.service.ts`
 2. Implement `chat()` method:
@@ -57,8 +60,9 @@
 6. Handle rate limit errors (429) with queue mechanism
 **Verify**: Unit test sends mock request; integration test hits OpenRouter with test prompt.
 
-### T1.2 — Interviewer System Prompts (4 SP)
+### T1.2 — Interviewer System Prompts (4 SP) ✅
 **Context**: Define AI persona and response format for the interviewer.
+**Status**: **DONE**
 **Actions**:
 1. Create `openrouter/prompts/interviewer-system.prompt.ts`
 2. Define base interviewer persona:
@@ -74,8 +78,9 @@
 6. Add template tests validating JSON output structure
 **Verify**: Prompt + test message → valid JSON matching `InterviewerResponse` schema.
 
-### T1.3 — Interview Controller & Session Management (5 SP)
+### T1.3 — Interview Controller & Session Management (5 SP) ✅
 **Context**: REST API for managing interview sessions.
+**Status**: **DONE**
 **Actions**:
 1. Create DTOs: `StartInterviewDto`, `SendMessageDto`, `InterviewResponseDto`
 2. Create `interview/interview.controller.ts`:
@@ -91,8 +96,9 @@
 5. Validate all inputs with class-validator
 **Verify**: Postman/curl flow: start → 3 messages → end → report returned.
 
-### T1.4 — TTS Service (4 SP)
+### T1.4 — TTS Service (4 SP) ✅
 **Context**: Text-to-Speech with word-level timestamps for lip-sync.
+**Status**: **DONE**
 **Actions**:
 1. Create `tts/tts.service.ts` and `tts/tts.module.ts`
 2. Implement Google Cloud TTS integration:
@@ -109,7 +115,7 @@
 
 ## Phase 2 · 3D Avatar & Frontend (24 SP)
 
-### T2.1 — TalkingHead Integration (6 SP)
+### T2.1 — TalkingHead Integration (6 SP) ✅
 **Context**: Integrate the TalkingHead library into Angular for 3D avatar rendering.
 **Actions**:
 1. Install TalkingHead: `npm i talkinghead` or import from CDN
@@ -127,7 +133,7 @@
 7. Add loading state with skeleton while avatar loads
 **Verify**: Avatar renders in browser; speaks test phrase with lip-sync; expressions change.
 
-### T2.2 — Voice Input/Output Controls (4 SP)
+### T2.2 — Voice Input/Output Controls (4 SP) ✅
 **Context**: Enable speech-to-text and text input for user responses.
 **Actions**:
 1. Create `features/interview/voice-controls.component.ts`
@@ -143,7 +149,7 @@
 6. Visual feedback: pulsing mic icon when recording, waveform animation
 **Verify**: Speak into mic → text appears; toggle to text mode → type and send works.
 
-### T2.3 — Chat Transcript Panel (3 SP)
+### T2.3 — Chat Transcript Panel (3 SP) ✅
 **Context**: Display conversation history alongside the avatar.
 **Actions**:
 1. Create `features/interview/chat-panel.component.ts`
@@ -156,7 +162,7 @@
 6. Add timestamp to each message
 **Verify**: Messages appear in correct order; auto-scroll works; progress updates.
 
-### T2.4 — Interview Configuration Page (4 SP)
+### T2.4 — Interview Configuration Page (4 SP) ✅
 **Context**: Landing page where user configures their interview.
 **Actions**:
 1. Create `features/home/home.component.ts` with hero section
@@ -173,7 +179,7 @@
 5. Store config in `InterviewService` signal state
 **Verify**: Fill form → submit → navigates to interview; config persists in service.
 
-### T2.5 — Main Interview View (4 SP)
+### T2.5 — Main Interview View (4 SP) ✅
 **Context**: Compose avatar, chat, and controls into the interview experience.
 **Actions**:
 1. Create `features/interview/interview.component.ts`
@@ -191,7 +197,7 @@
 6. Add keyboard shortcuts: Space = toggle mic, Enter = send text
 **Verify**: Full interview loop works: config → questions → answers → closing.
 
-### T2.6 — Theme & Responsive Design (3 SP)
+### T2.6 — Theme & Responsive Design (3 SP) ✅
 **Context**: Dark/light theme and responsive layout.
 **Actions**:
 1. Create `shared/components/theme-toggle.component.ts`
@@ -211,7 +217,7 @@
 
 ## Phase 3 · Reports & History (14 SP)
 
-### T3.1 — Post-Interview Evaluation (5 SP)
+### T3.1 — Post-Interview Evaluation (5 SP) ✅
 **Context**: AI generates a comprehensive interview report.
 **Actions**:
 1. When interview ends, backend sends full conversation to evaluator prompt
@@ -232,7 +238,7 @@
 5. Return report via `POST /api/interview/end`
 **Verify**: End interview → receive valid report with scores and feedback.
 
-### T3.2 — Report Viewer Component (4 SP)
+### T3.2 — Report Viewer Component (4 SP) ✅
 **Context**: Display the interview report with visual scoring.
 **Actions**:
 1. Create `features/report/report.component.ts`
@@ -245,7 +251,7 @@
 7. Add "Try Again" button → navigate to config
 **Verify**: Report renders with all sections; PDF download works; navigation works.
 
-### T3.3 — Interview History (3 SP)
+### T3.3 — Interview History (3 SP) ✅
 **Context**: Store and display past interviews.
 **Actions**:
 1. Create `core/services/storage.service.ts`
@@ -258,7 +264,7 @@
 5. Sort by date (newest first)
 **Verify**: Complete interview → appears in history; click → shows report; delete works.
 
-### T3.4 — Resume PDF Parser (2 SP)
+### T3.4 — Resume PDF Parser (2 SP) ✅
 **Context**: Extract text from uploaded resume for personalized questions.
 **Actions**:
 1. Add `pdf-parse` or `pdfjs-dist` to backend
@@ -273,7 +279,7 @@
 
 ## Phase 4 · CI/CD & Deployment (12 SP)
 
-### T4.1 — GitHub Actions CI Pipeline (3 SP)
+### T4.1 — GitHub Actions CI Pipeline (3 SP) ✅
 **Context**: Automated testing and security checks on every PR.
 **Actions**:
 1. Create `.github/workflows/ci.yml`:
@@ -295,7 +301,7 @@
 3. Add branch protection rules: require CI pass + 1 review
 **Verify**: Push to PR → CI runs → all checks pass.
 
-### T4.2 — Deploy Frontend to GitHub Pages (3 SP)
+### T4.2 — Deploy Frontend to GitHub Pages (3 SP) ✅
 **Context**: Automated deployment of Angular SPA to GitHub Pages.
 **Actions**:
 1. Create `.github/workflows/deploy-frontend.yml`
@@ -306,7 +312,7 @@
 6. Add environment-specific API URL for production
 **Verify**: Merge to main → site live on `https://username.github.io/interview-simulator`.
 
-### T4.3 — Deploy Backend to Vercel/Railway (3 SP)
+### T4.3 — Deploy Backend to Vercel/Railway (3 SP) ✅
 **Context**: Deploy NestJS API to serverless platform.
 **Actions**:
 1. Create `vercel.json` or `railway.toml` configuration
@@ -317,7 +323,7 @@
 6. Test production API endpoints
 **Verify**: Backend live; frontend can call production API; health check passes.
 
-### T4.4 — E2E Testing (3 SP)
+### T4.4 — E2E Testing (3 SP) ✅
 **Context**: End-to-end tests for critical user flows.
 **Actions**:
 1. Install Cypress: `npm i -D cypress`
@@ -333,7 +339,7 @@
 
 ## Phase 5 · Polish & Extras (12 SP)
 
-### T5.1 — Internationalization (3 SP)
+### T5.1 — Internationalization (3 SP) ✅
 **Context**: Support English and Spanish.
 **Actions**:
 1. Install `@ngx-translate/core` and `@ngx-translate/http-loader`
@@ -343,7 +349,7 @@
 5. Sync UI language with interview language config
 **Verify**: Switch language → all UI text updates; interview runs in selected language.
 
-### T5.2 — Accessibility & Performance (3 SP)
+### T5.2 — Accessibility & Performance (3 SP) ✅
 **Context**: Ensure WCAG 2.1 AA compliance and fast loading.
 **Actions**:
 1. Add ARIA labels to all interactive elements
@@ -355,7 +361,7 @@
 7. Run Lighthouse audit → fix issues until score ≥ 90
 **Verify**: Lighthouse: Performance ≥ 90, Accessibility ≥ 90; keyboard-only navigation works.
 
-### T5.3 — Error Handling & Offline Mode (3 SP)
+### T5.3 — Error Handling & Offline Mode (3 SP) ✅
 **Context**: Graceful error handling and offline review capability.
 **Actions**:
 1. Create global error handler service
@@ -366,7 +372,7 @@
 6. Show connection status indicator
 **Verify**: Disconnect network → can view history; reconnect → interview resumes.
 
-### T5.4 — Documentation & README (3 SP)
+### T5.4 — Documentation & README (3 SP) ✅
 **Context**: Comprehensive project documentation.
 **Actions**:
 1. Write detailed `README.md`:
