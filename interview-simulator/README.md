@@ -28,25 +28,27 @@
 ## 🏗️ Architecture
 
 ```
-interview-simulator/
-├── frontend/          # Angular 21 SPA
-│   ├── src/app/
-│   │   ├── core/      # Services (avatar, voice, state, storage, toast, connection)
-│   │   ├── features/  # Pages (home, interview, report, history)
-│   │   └── shared/    # Components (navbar, theme-toggle, toast-container)
-│   └── cypress/       # E2E tests
-├── backend/           # NestJS 11 API
-│   └── src/
-│       ├── interview/ # Controller, service, DTOs, session management
-│       ├── openrouter/ # AI model integration (Arcee Trinity)
-│       ├── tts/       # Google Cloud Text-to-Speech with lipsync
-│       └── health/    # Health check endpoint
-├── infra/
-│   └── docker/        # Dockerfile for backend
-└── .github/
-    ├── workflows/     # CI + deployment pipelines
-    ├── specs/         # Project specification & tasks
-    └── dependabot.yml # Automated dependency updates
+IntervIA/
+├── render.yaml            # Render.com Blueprint (deployment config)
+└── interview-simulator/
+    ├── frontend/          # Angular 21 SPA
+    │   ├── src/app/
+    │   │   ├── core/      # Services (avatar, voice, state, storage, toast, connection)
+    │   │   ├── features/  # Pages (home, interview, report, history)
+    │   │   └── shared/    # Components (navbar, theme-toggle, toast-container)
+    │   └── cypress/       # E2E tests
+    ├── backend/           # NestJS 11 API
+    │   └── src/
+    │       ├── interview/ # Controller, service, DTOs, session management
+    │       ├── openrouter/ # AI model integration (Arcee Trinity)
+    │       ├── tts/       # Google Cloud Text-to-Speech with lipsync
+    │       └── health/    # Health check endpoint
+    ├── infra/
+    │   └── docker/        # Dockerfile for backend
+    └── .github/
+        ├── workflows/     # CI pipeline
+        ├── specs/         # Project specification & tasks
+        └── dependabot.yml # Automated dependency updates
 ```
 
 ---
@@ -58,13 +60,12 @@ interview-simulator/
 - **Node.js** ≥ 22
 - **npm** ≥ 10
 - [OpenRouter API key](https://openrouter.ai/keys) (for AI model)
-- [Google Cloud TTS API key](https://console.cloud.google.com/) (optional, for voice)
 
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/interview-simulator.git
-cd interview-simulator
+git clone https://github.com/juanmopy/IntervIA.git
+cd IntervIA/interview-simulator
 ```
 
 ### 2. Set up the backend
@@ -111,7 +112,7 @@ cd frontend && npm run cypress:run
 | Variable | Description | Required |
 |----------|-------------|----------|
 | `OPENROUTER_API_KEY` | API key for OpenRouter (Arcee Trinity model) | ✅ |
-| `GOOGLE_TTS_API_KEY` | Google Cloud Text-to-Speech API key | Optional |
+| `OPENROUTER_MODEL` | AI model identifier (default: `arcee-ai/trinity-large-preview:free`) | No |
 | `PORT` | Server port (default: 3000) | No |
 | `CORS_ORIGIN` | Allowed CORS origin (default: `http://localhost:4200`) | No |
 | `THROTTLE_TTL` | Rate limit window in ms (default: 60000) | No |
@@ -180,18 +181,26 @@ cd frontend && npm run cypress:run
 
 ## 🚢 Deployment
 
-### Frontend → GitHub Pages
+The project deploys to **[Render.com](https://render.com/)** using a Blueprint (`render.yaml` at the repo root).
 
-Automated via `.github/workflows/deploy-frontend.yml`. Deploys on push to `main`.
+### Render.com (recommended)
 
-### Backend → Railway
+1. Go to [render.com](https://render.com/) → **New** → **Blueprint**
+2. Select the `juanmopy/IntervIA` repository
+3. Render will detect `render.yaml` and configure two services:
+   - **intervia-api** — NestJS backend (free web service)
+   - **intervia-web** — Angular frontend (static site)
+4. Set the `OPENROUTER_API_KEY` secret when prompted
+5. Click **Apply** — both services will build and deploy automatically
 
-1. Connect your GitHub repo to [Railway](https://railway.app/)
-2. Set environment variables in the Railway dashboard
-3. Railway uses `railway.toml` for configuration
-4. Backend auto-deploys from `main` branch
+| Service | URL |
+|---------|-----|
+| Frontend | `https://intervia-web.onrender.com` |
+| Backend API | `https://intervia-api.onrender.com/api` |
 
-Alternatively, use the Docker image:
+> **Note:** On the free tier, services sleep after 15 min of inactivity. The first request may take ~30s to wake up.
+
+### Docker (alternative)
 
 ```bash
 docker build -f infra/docker/Dockerfile.backend -t interview-api .
