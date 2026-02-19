@@ -17,7 +17,7 @@ services:
       - key: OPENROUTER_API_KEY
         sync: false
       - key: OPENROUTER_MODEL
-        value: deepseek/deepseek-r1
+        value: arcee-ai/trinity-large-preview:free
       - key: CORS_ORIGIN
         value: https://intervia-web.onrender.com
 
