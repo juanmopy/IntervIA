@@ -25,7 +25,6 @@ services:
   - type: web
     name: intervia-web
     runtime: static
-    region: oregon
     plan: free
     rootDir: interview-simulator/frontend
     buildCommand: npm ci && npm run build -- --configuration production
