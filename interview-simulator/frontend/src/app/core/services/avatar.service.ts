@@ -83,12 +83,8 @@ export class AvatarService {
 
   /** Default TalkingHead options */
   private readonly defaultHeadOptions = {
-    ttsEndpoint: '',          // Empty = use browser SpeechSynthesis as fallback
+    ttsEndpoint: null as string | null,   // null = don't use built-in TTS at all
     ttsLang: 'en-US',
-    ttsVoice: '',
-    ttsRate: 1.0,
-    ttsPitch: 1.0,
-    ttsVolume: 1.0,
     lipsyncLang: 'en',
     lipsyncModules: [] as string[],  // Disabled: Vite can't resolve TalkingHead's dynamic lipsync imports
     cameraView: 'upper' as const,
@@ -184,6 +180,9 @@ export class AvatarService {
   async speak(payload: SpeakPayload, actions?: AvatarAction): Promise<void> {
     if (!this.head) return;
 
+    // Restore audio gain in case it was muted by a previous speakText fallback
+    try { this.head.setMixerGain(1); } catch { /* ignore */ }
+
     // Apply facial expression / mood before speaking
     if (actions?.facialExpression) {
       this.setMood(actions.facialExpression);
@@ -229,58 +228,112 @@ export class AvatarService {
 
   /**
    * Make avatar speak using browser SpeechSynthesis for audio
-   * and TalkingHead's speakAudio with generated visemes for lip sync.
+   * with TalkingHead lip-sync animation in parallel.
    *
-   * We can't use head.speakText() because it requires a valid ttsEndpoint URL.
-   * Instead we generate viseme timing from text and feed it to speakAudio()
-   * while SpeechSynthesis plays the voice in parallel.
+   * Strategy (based on TalkingHead docs):
+   *  1. Generate viseme timing using TalkingHead's loaded lipsync-en module
+   *     (wordsToVisemes gives multi-phoneme visemes per word — much better lip sync)
+   *  2. Create a silent AudioBuffer so TalkingHead has a timeline to animate against
+   *  3. Mute TalkingHead's audio output via setMixerGain(0) (animation keeps running)
+   *  4. Play actual voice through browser SpeechSynthesis in parallel
+   *  5. On speech end, stop avatar animation and restore audio gain
+   *
+   * We can't use head.speakText() because it requires a valid ttsEndpoint URL;
+   * without one it tries fetch('') → gets HTML → SyntaxError on JSON.parse.
    */
   speakText(text: string, lang?: string): void {
     if (!this.head) return;
+
+    const rawWords = text.split(/\s+/).filter(Boolean);
+    if (rawWords.length === 0) return;
 
     this._state.set('speaking');
 
     const ttsLang = lang?.startsWith('es') ? 'es-ES' : 'en-US';
 
-    // Generate word-level viseme data from text
-    const { words, wtimes, wdurations, visemes, vtimes, vdurations } =
-      this.textToVisemeData(text);
+    // ── Generate visemes using TalkingHead's lipsync module ──
+    const msPerWord = 250;
+    const totalDurationMs = rawWords.length * msPerWord + 500;
 
-    try {
-      // Feed visemes to TalkingHead for lip animation (no audio buffer)
-      this.head.speakAudio({
-        words,
-        wtimes,
-        wdurations,
-        visemes,
-        vtimes,
-        vdurations,
-      });
-    } catch (err) {
-      console.warn('[AvatarService] speakAudio viseme-only failed:', err);
+    const words: string[] = [];
+    const wtimes: number[] = [];
+    const wdurations: number[] = [];
+    const visemes: string[] = [];
+    const vtimes: number[] = [];
+    const vdurations: number[] = [];
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const lipsyncModule: any = this.head.lipsync?.['en'];
+
+    for (let i = 0; i < rawWords.length; i++) {
+      const word = rawWords[i];
+      const wordStart = i * msPerWord;
+
+      words.push(word);
+      wtimes.push(wordStart);
+      wdurations.push(msPerWord);
+
+      // Use TalkingHead's LipsyncEn.wordsToVisemes for accurate multi-phoneme visemes
+      if (lipsyncModule) {
+        try {
+          const result = lipsyncModule.wordsToVisemes(word);
+          if (result?.visemes?.length > 0) {
+            // Scale the module's relative times to fit within the word's time slot
+            const lastIdx = result.times.length - 1;
+            const totalRelative = (result.times[lastIdx] ?? 0) + (result.durations[lastIdx] ?? 0);
+            const scale = totalRelative > 0 ? msPerWord / totalRelative : 1;
+
+            for (let j = 0; j < result.visemes.length; j++) {
+              visemes.push(result.visemes[j]);
+              vtimes.push(wordStart + (result.times[j] ?? 0) * scale);
+              vdurations.push((result.durations[j] ?? 0) * scale);
+            }
+            continue;
+          }
+        } catch { /* fallback below */ }
+      }
+
+      // Fallback: silence viseme
+      visemes.push('sil');
+      vtimes.push(wordStart);
+      vdurations.push(msPerWord);
     }
 
-    // Play voice via browser SpeechSynthesis in parallel
+    // ── Feed silent audio + visemes to TalkingHead for lip animation ──
+    try {
+      const sampleRate = 22050;
+      const numSamples = Math.max(Math.ceil((totalDurationMs / 1000) * sampleRate), 1);
+      const silentAudio = new AudioBuffer({ length: numSamples, numberOfChannels: 1, sampleRate });
+
+      // Mute TalkingHead's audio output (we play voice via SpeechSynthesis)
+      this.head.setMixerGain(0);
+
+      this.head.speakAudio(
+        { audio: silentAudio, words, wtimes, wdurations, visemes, vtimes, vdurations },
+        { lipsyncLang: 'en' },
+      );
+    } catch (err) {
+      console.warn('[AvatarService] speakAudio with silent buffer failed:', err);
+    }
+
+    // ── Play actual voice via browser SpeechSynthesis ──
+    const cleanup = () => {
+      try { this.head?.stopSpeaking(); } catch { /* ignore */ }
+      try { this.head?.setMixerGain(1); } catch { /* ignore */ }
+      if (this._state() === 'speaking') this._state.set('ready');
+    };
+
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = ttsLang;
       utterance.rate = 1.0;
       utterance.pitch = 1.0;
-      utterance.onend = () => {
-        // Stop any remaining avatar animation and reset state
-        try { this.head?.stopSpeaking(); } catch { /* ignore */ }
-        if (this._state() === 'speaking') this._state.set('ready');
-      };
-      utterance.onerror = () => {
-        try { this.head?.stopSpeaking(); } catch { /* ignore */ }
-        if (this._state() === 'speaking') this._state.set('ready');
-      };
+      utterance.onend = cleanup;
+      utterance.onerror = cleanup;
       window.speechSynthesis.speak(utterance);
     } else {
-      // No SpeechSynthesis — just let the viseme animation run and poll for end
-      this.waitForSpeechEnd().then(() => {
-        if (this._state() === 'speaking') this._state.set('ready');
-      });
+      // No SpeechSynthesis — let the silent buffer animation run, then clean up
+      this.waitForSpeechEnd().then(cleanup);
     }
   }
 
@@ -347,55 +400,6 @@ export class AvatarService {
   }
 
   /* ── Private helpers ────────────────────────────────────────── */
-
-  /** Simple char→viseme map (Oculus blend shapes) */
-  private static readonly CHAR_VISEME: Record<string, string> = {
-    a: 'viseme_aa', b: 'viseme_PP', c: 'viseme_kk', d: 'viseme_DD',
-    e: 'viseme_E',  f: 'viseme_FF', g: 'viseme_kk', h: 'viseme_sil',
-    i: 'viseme_I',  j: 'viseme_CH', k: 'viseme_kk', l: 'viseme_nn',
-    m: 'viseme_PP', n: 'viseme_nn', o: 'viseme_O',  p: 'viseme_PP',
-    q: 'viseme_kk', r: 'viseme_RR', s: 'viseme_SS', t: 'viseme_DD',
-    u: 'viseme_U',  v: 'viseme_FF', w: 'viseme_U',  x: 'viseme_SS',
-    y: 'viseme_I',  z: 'viseme_SS',
-  };
-
-  /**
-   * Generate word + viseme timing arrays from plain text.
-   * Estimates ~200 ms per word for lip animation.
-   */
-  private textToVisemeData(text: string) {
-    const rawWords = text.split(/\s+/).filter(Boolean);
-    const msPerWord = 200;
-
-    const words: string[] = [];
-    const wtimes: number[] = [];
-    const wdurations: number[] = [];
-    const visemes: string[] = [];
-    const vtimes: number[] = [];
-    const vdurations: number[] = [];
-
-    for (let i = 0; i < rawWords.length; i++) {
-      const word = rawWords[i];
-      const t = i * msPerWord;
-
-      words.push(word);
-      wtimes.push(t);
-      wdurations.push(msPerWord);
-
-      // Pick viseme from first meaningful letter
-      const clean = word.toLowerCase().replace(/[^a-z]/g, '');
-      let vis = 'viseme_sil';
-      if (clean.startsWith('th')) vis = 'viseme_TH';
-      else if (clean.startsWith('sh') || clean.startsWith('ch')) vis = 'viseme_CH';
-      else if (clean.length > 0) vis = AvatarService.CHAR_VISEME[clean[0]] ?? 'viseme_sil';
-
-      visemes.push(vis);
-      vtimes.push(t);
-      vdurations.push(msPerWord);
-    }
-
-    return { words, wtimes, wdurations, visemes, vtimes, vdurations };
-  }
 
   /**
    * Decode base64 MP3 to AudioBuffer via OfflineAudioContext.
