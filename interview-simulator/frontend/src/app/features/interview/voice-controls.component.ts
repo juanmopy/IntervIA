@@ -191,7 +191,7 @@ export class VoiceControlsComponent implements OnInit, OnDestroy {
    * before automatically sending the accumulated transcript.
    * A longer value gives the user more time to pause between phrases.
    */
-  private readonly SILENCE_TIMEOUT_MS = 2500;
+  private readonly SILENCE_TIMEOUT_MS = 5000;
 
   private resultSub?: Subscription;
   private silenceTimer?: ReturnType<typeof setTimeout>;
@@ -251,13 +251,15 @@ export class VoiceControlsComponent implements OnInit, OnDestroy {
 
   /**
    * (Re)start the silence timer.
-   * When it fires the accumulated transcript is sent and listening stops.
+   * When it fires the accumulated transcript is sent but the mic stays open
+   * so the user can continue speaking after a long pause.
+   * The user must press the mic button to stop listening.
    */
   private resetSilenceTimer(): void {
     this.clearSilenceTimer();
     this.silenceTimer = setTimeout(() => {
       this.flushAccumulated();
-      this.voiceService.stopListening();
+      // Keep listening — the user stops manually via the mic button
     }, this.SILENCE_TIMEOUT_MS);
   }
 
