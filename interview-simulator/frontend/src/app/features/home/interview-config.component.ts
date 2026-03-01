@@ -6,12 +6,13 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { type InterviewConfig } from '@core/services/interview-state.service';
 
 @Component({
   selector: 'app-interview-config',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <form
@@ -22,14 +23,14 @@ import { type InterviewConfig } from '@core/services/interview-state.service';
       <!-- Job Role -->
       <div>
         <label for="role" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-          Job Role <span class="text-red-500">*</span>
+          {{ 'CONFIG.ROLE_LABEL' | translate }} <span class="text-red-500">*</span>
         </label>
         <input
           id="role"
           type="text"
           formControlName="role"
           list="role-suggestions"
-          placeholder="e.g. Frontend Developer, Data Scientist..."
+          [placeholder]="'CONFIG.ROLE_PLACEHOLDER' | translate"
           class="w-full px-3 py-2.5 text-sm bg-white dark:bg-slate-800 border rounded-lg
                  focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
                  text-slate-800 dark:text-slate-200 placeholder-slate-400"
@@ -50,14 +51,14 @@ import { type InterviewConfig } from '@core/services/interview-state.service';
           <option value="Machine Learning Engineer"></option>
         </datalist>
         @if (form.get('role')?.invalid && form.get('role')?.touched) {
-          <p class="mt-1 text-xs text-red-500" role="alert">Please enter a job role</p>
+          <p class="mt-1 text-xs text-red-500" role="alert">{{ 'CONFIG.ROLE_REQUIRED' | translate }}</p>
         }
       </div>
 
       <!-- Interview Type -->
       <div>
         <label id="type-label" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-          Interview Type <span class="text-red-500">*</span>
+          {{ 'CONFIG.TYPE_LABEL' | translate }} <span class="text-red-500">*</span>
         </label>
         <div class="flex gap-3" role="radiogroup" aria-labelledby="type-label">
           @for (t of interviewTypes; track t.value) {
@@ -74,7 +75,7 @@ import { type InterviewConfig } from '@core/services/interview-state.service';
                           peer-checked:bg-primary-600 peer-checked:text-white peer-checked:border-primary-600
                           bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300
                           border-slate-300 dark:border-slate-600 hover:border-primary-400">
-                {{ t.label }}
+                {{ t.labelKey | translate }}
               </div>
             </label>
           }
@@ -84,7 +85,7 @@ import { type InterviewConfig } from '@core/services/interview-state.service';
       <!-- Difficulty -->
       <div>
         <label id="difficulty-label" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-          Difficulty <span class="text-red-500">*</span>
+          {{ 'CONFIG.DIFFICULTY_LABEL' | translate }} <span class="text-red-500">*</span>
         </label>
         <div class="inline-flex rounded-lg border border-slate-300 dark:border-slate-600 overflow-hidden" role="radiogroup" aria-labelledby="difficulty-label">
           @for (d of difficulties; track d.value) {
@@ -100,7 +101,7 @@ import { type InterviewConfig } from '@core/services/interview-state.service';
                           bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300
                           hover:bg-slate-50 dark:hover:bg-slate-700
                           border-r border-slate-300 dark:border-slate-600 last:border-r-0">
-                {{ d.label }}
+                {{ d.labelKey | translate }}
               </div>
             </label>
           }
@@ -110,7 +111,7 @@ import { type InterviewConfig } from '@core/services/interview-state.service';
       <!-- Language -->
       <div>
         <label for="language" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-          Language
+          {{ 'CONFIG.LANGUAGE_LABEL' | translate }}
         </label>
         <select
           id="language"
@@ -119,15 +120,15 @@ import { type InterviewConfig } from '@core/services/interview-state.service';
                  focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
                  text-slate-800 dark:text-slate-200"
         >
-          <option value="en">English</option>
-          <option value="es">Español</option>
+          <option value="en">{{ 'CONFIG.LANG_EN' | translate }}</option>
+          <option value="es">{{ 'CONFIG.LANG_ES' | translate }}</option>
         </select>
       </div>
 
       <!-- Number of Questions -->
       <div>
         <label for="totalQuestions" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-          Number of Questions: <span class="font-bold text-primary-600 dark:text-primary-400">{{ form.get('totalQuestions')?.value }}</span>
+          {{ 'CONFIG.QUESTIONS_LABEL' | translate }}: <span class="font-bold text-primary-600 dark:text-primary-400">{{ form.get('totalQuestions')?.value }}</span>
         </label>
         <input
           id="totalQuestions"
@@ -148,13 +149,13 @@ import { type InterviewConfig } from '@core/services/interview-state.service';
       <!-- Resume Upload (textarea for now) -->
       <div>
         <label for="resumeText" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-          Resume / CV <span class="text-xs text-slate-400">(optional — paste text)</span>
+          {{ 'CONFIG.RESUME_LABEL' | translate }} <span class="text-xs text-slate-400">{{ 'CONFIG.RESUME_OPTIONAL' | translate }}</span>
         </label>
         <textarea
           id="resumeText"
           formControlName="resumeText"
           rows="3"
-          placeholder="Paste your resume text here..."
+          [placeholder]="'CONFIG.RESUME_PLACEHOLDER' | translate"
           class="w-full px-3 py-2.5 text-sm bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg
                  focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
                  resize-none text-slate-800 dark:text-slate-200 placeholder-slate-400"
@@ -164,13 +165,13 @@ import { type InterviewConfig } from '@core/services/interview-state.service';
       <!-- Job Description -->
       <div>
         <label for="jobDescription" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-          Job Description <span class="text-xs text-slate-400">(optional)</span>
+          {{ 'CONFIG.JOB_DESC_LABEL' | translate }} <span class="text-xs text-slate-400">{{ 'CONFIG.JOB_DESC_OPTIONAL' | translate }}</span>
         </label>
         <textarea
           id="jobDescription"
           formControlName="jobDescription"
           rows="3"
-          placeholder="Paste the job description here..."
+          [placeholder]="'CONFIG.JOB_DESC_PLACEHOLDER' | translate"
           class="w-full px-3 py-2.5 text-sm bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg
                  focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
                  resize-none text-slate-800 dark:text-slate-200 placeholder-slate-400"
@@ -192,10 +193,10 @@ import { type InterviewConfig } from '@core/services/interview-state.service';
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
             </svg>
-            Starting Interview...
+            {{ 'CONFIG.SUBMITTING' | translate }}
           </span>
         } @else {
-          Start Interview
+          {{ 'CONFIG.SUBMIT' | translate }}
         }
       </button>
     </form>
@@ -207,15 +208,15 @@ export class InterviewConfigComponent {
   private readonly fb = inject(FormBuilder);
 
   readonly interviewTypes = [
-    { value: 'technical', label: 'Technical' },
-    { value: 'behavioral', label: 'Behavioral' },
-    { value: 'mixed', label: 'Mixed' },
+    { value: 'technical', labelKey: 'CONFIG.TYPE_TECHNICAL' },
+    { value: 'behavioral', labelKey: 'CONFIG.TYPE_BEHAVIORAL' },
+    { value: 'mixed', labelKey: 'CONFIG.TYPE_MIXED' },
   ];
 
   readonly difficulties = [
-    { value: 'junior', label: 'Junior' },
-    { value: 'mid', label: 'Mid' },
-    { value: 'senior', label: 'Senior' },
+    { value: 'junior', labelKey: 'CONFIG.DIFFICULTY_JUNIOR' },
+    { value: 'mid', labelKey: 'CONFIG.DIFFICULTY_MID' },
+    { value: 'senior', labelKey: 'CONFIG.DIFFICULTY_SENIOR' },
   ];
 
   isSubmitting = false;

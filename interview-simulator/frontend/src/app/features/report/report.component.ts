@@ -1,12 +1,13 @@
 import { Component, inject, ChangeDetectionStrategy, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { TitleCasePipe } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { InterviewStateService } from '@core/services/interview-state.service';
 
 @Component({
   selector: 'app-report',
   standalone: true,
-  imports: [TitleCasePipe],
+  imports: [TitleCasePipe, TranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-primary-50
@@ -16,9 +17,9 @@ import { InterviewStateService } from '@core/services/interview-state.service';
 
         <!-- Header -->
         <div class="text-center mb-8">
-          <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Interview Report</h1>
+          <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">{{ 'REPORT.TITLE' | translate }}</h1>
           <p class="text-slate-500 dark:text-slate-400">
-            {{ state.config()?.role ?? 'Interview' }} — {{ state.config()?.difficulty ?? '' | titlecase }} Level
+            {{ state.config()?.role ?? 'Interview' }} — {{ state.config()?.difficulty ?? '' | titlecase }} {{ 'REPORT.LEVEL' | translate }}
           </p>
         </div>
 
@@ -39,7 +40,7 @@ import { InterviewStateService } from '@core/services/interview-state.service';
               </svg>
               <div class="absolute inset-0 flex flex-col items-center justify-center">
                 <span class="text-4xl font-bold text-slate-800 dark:text-white">{{ r.overallScore }}</span>
-                <span class="text-xs text-slate-400 uppercase tracking-wide">Score</span>
+                <span class="text-xs text-slate-400 uppercase tracking-wide">{{ 'REPORT.SCORE' | translate }}</span>
               </div>
             </div>
           </div>
@@ -54,7 +55,7 @@ import { InterviewStateService } from '@core/services/interview-state.service';
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <h3 class="text-sm font-semibold text-green-700 dark:text-green-300 uppercase tracking-wide">Strengths</h3>
+                <h3 class="text-sm font-semibold text-green-700 dark:text-green-300 uppercase tracking-wide">{{ 'REPORT.STRENGTHS' | translate }}</h3>
               </div>
               <ul class="space-y-2">
                 @for (s of r.strengths; track s) {
@@ -75,7 +76,7 @@ import { InterviewStateService } from '@core/services/interview-state.service';
                       d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
                   </svg>
                 </div>
-                <h3 class="text-sm font-semibold text-amber-700 dark:text-amber-300 uppercase tracking-wide">Areas to Improve</h3>
+                <h3 class="text-sm font-semibold text-amber-700 dark:text-amber-300 uppercase tracking-wide">{{ 'REPORT.IMPROVEMENTS' | translate }}</h3>
               </div>
               <ul class="space-y-2">
                 @for (i of r.improvements; track i) {
@@ -91,7 +92,7 @@ import { InterviewStateService } from '@core/services/interview-state.service';
           <!-- Question Breakdown -->
           @if (r.questionScores && r.questionScores.length > 0) {
             <div class="mb-8">
-              <h2 class="text-lg font-semibold text-slate-800 dark:text-white mb-4">Question Breakdown</h2>
+              <h2 class="text-lg font-semibold text-slate-800 dark:text-white mb-4">{{ 'REPORT.QUESTION_BREAKDOWN' | translate }}</h2>
               <div class="space-y-3">
                 @for (q of r.questionScores; track $index) {
                   <div class="bg-white dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 p-4">
@@ -118,7 +119,7 @@ import { InterviewStateService } from '@core/services/interview-state.service';
           <!-- Suggested Resources -->
           @if (r.suggestedResources && r.suggestedResources.length > 0) {
             <div class="mb-8">
-              <h2 class="text-lg font-semibold text-slate-800 dark:text-white mb-3">Suggested Resources</h2>
+              <h2 class="text-lg font-semibold text-slate-800 dark:text-white mb-3">{{ 'REPORT.RESOURCES' | translate }}</h2>
               <div class="bg-white dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 p-4">
                 <ul class="space-y-2">
                   @for (res of r.suggestedResources; track res) {
@@ -143,7 +144,7 @@ import { InterviewStateService } from '@core/services/interview-state.service';
                      rounded-xl shadow-lg shadow-primary-500/20 transition-all"
               (click)="tryAgain()"
             >
-              Try Again
+              {{ 'REPORT.TRY_AGAIN' | translate }}
             </button>
             <button
               type="button"
@@ -152,19 +153,19 @@ import { InterviewStateService } from '@core/services/interview-state.service';
                      hover:bg-slate-50 dark:hover:bg-slate-700 rounded-xl transition-all"
               (click)="downloadPdf()"
             >
-              Download PDF
+              {{ 'REPORT.DOWNLOAD_PDF' | translate }}
             </button>
           </div>
         } @else {
           <!-- No report state -->
           <div class="text-center py-16">
-            <p class="text-slate-400 dark:text-slate-500">No report available.</p>
+            <p class="text-slate-400 dark:text-slate-500">{{ 'REPORT.NO_REPORT' | translate }}</p>
             <button
               type="button"
               class="mt-4 px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-700"
               (click)="tryAgain()"
             >
-              Start a new interview
+              {{ 'REPORT.START_NEW' | translate }}
             </button>
           </div>
         }

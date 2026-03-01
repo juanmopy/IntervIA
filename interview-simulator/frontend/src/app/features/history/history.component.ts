@@ -1,12 +1,13 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { DatePipe, TitleCasePipe } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { StorageService, type StoredInterview } from '@core/services/storage.service';
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [DatePipe, TitleCasePipe],
+  imports: [DatePipe, TitleCasePipe, TranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-primary-50
@@ -16,9 +17,9 @@ import { StorageService, type StoredInterview } from '@core/services/storage.ser
         <!-- Header -->
         <div class="flex items-center justify-between mb-6">
           <div>
-            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Interview History</h1>
+            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">{{ 'HISTORY.TITLE' | translate }}</h1>
             <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              {{ storage.history().length }} past {{ storage.history().length === 1 ? 'interview' : 'interviews' }}
+              {{ storage.history().length }} {{ (storage.history().length === 1 ? 'HISTORY.PAST_INTERVIEW' : 'HISTORY.PAST_INTERVIEWS') | translate }}
             </p>
           </div>
 
@@ -30,7 +31,7 @@ import { StorageService, type StoredInterview } from '@core/services/storage.ser
                      border border-red-200 dark:border-red-800 rounded-lg transition-colors"
               (click)="confirmClearAll()"
             >
-              {{ showClearConfirm() ? 'Confirm Clear All?' : 'Clear All' }}
+              {{ showClearConfirm() ? ('HISTORY.CONFIRM_CLEAR' | translate) : ('HISTORY.CLEAR_ALL' | translate) }}
             </button>
           }
         </div>
@@ -66,7 +67,7 @@ import { StorageService, type StoredInterview } from '@core/services/storage.ser
                   class="p-2 opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500
                          dark:hover:text-red-400 transition-all rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30"
                   (click)="deleteInterview($event, interview.id)"
-                  aria-label="Delete interview"
+                  [attr.aria-label]="'HISTORY.DELETE_ARIA' | translate"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -83,14 +84,14 @@ import { StorageService, type StoredInterview } from '@core/services/storage.ser
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <p class="text-slate-400 dark:text-slate-500 mb-4">No interviews yet</p>
+            <p class="text-slate-400 dark:text-slate-500 mb-4">{{ 'HISTORY.NO_INTERVIEWS' | translate }}</p>
             <button
               type="button"
               class="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-700
                      dark:text-primary-400 dark:hover:text-primary-300"
               (click)="startNew()"
             >
-              Start your first interview
+              {{ 'HISTORY.START_FIRST' | translate }}
             </button>
           </div>
         }

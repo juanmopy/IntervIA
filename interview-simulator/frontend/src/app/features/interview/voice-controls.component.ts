@@ -10,6 +10,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { VoiceService } from '@core/services/voice.service';
 
@@ -18,7 +19,7 @@ export type InputMode = 'voice' | 'text';
 @Component({
   selector: 'app-voice-controls',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, TranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="voice-controls flex flex-col gap-3">
@@ -37,7 +38,7 @@ export type InputMode = 'voice' | 'text';
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
             </svg>
-            Voice
+            {{ 'INTERVIEW.VOICE' | translate }}
           </span>
         </button>
         <button
@@ -53,7 +54,7 @@ export type InputMode = 'voice' | 'text';
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
-            Text
+            {{ 'INTERVIEW.TEXT' | translate }}
           </span>
         </button>
       </div>
@@ -70,7 +71,7 @@ export type InputMode = 'voice' | 'text';
               : 'bg-primary-600 hover:bg-primary-700 focus:ring-primary-200 dark:focus:ring-primary-800 shadow-lg shadow-primary-500/30'"
             (click)="toggleMic()"
             [disabled]="disabled"
-            [attr.aria-label]="voiceService.isListening() ? 'Stop recording' : 'Start recording'"
+            [attr.aria-label]="(voiceService.isListening() ? 'INTERVIEW.STOP_RECORDING' : 'INTERVIEW.START_RECORDING') | translate"
           >
             <!-- Pulsing ring when recording -->
             @if (voiceService.isListening()) {
@@ -114,7 +115,7 @@ export type InputMode = 'voice' | 'text';
           <!-- Browser not supported -->
           @if (!voiceService.isSupported()) {
             <p class="text-xs text-amber-600 dark:text-amber-400 text-center">
-              Voice input is not supported in this browser. Use text mode instead.
+              {{ 'INTERVIEW.VOICE_NOT_SUPPORTED' | translate }}
             </p>
           }
 
@@ -135,7 +136,7 @@ export type InputMode = 'voice' | 'text';
                    focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
                    resize-none text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500"
             rows="2"
-            placeholder="Type your response..."
+            [placeholder]="'INTERVIEW.TYPE_RESPONSE' | translate"
             [(ngModel)]="textInput"
             (keydown.enter)="onTextEnter($event)"
             [disabled]="disabled"
@@ -146,7 +147,7 @@ export type InputMode = 'voice' | 'text';
                    rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
             (click)="sendText()"
             [disabled]="disabled || !textInput.trim()"
-            aria-label="Send message"
+            [attr.aria-label]="'INTERVIEW.SEND_MESSAGE' | translate"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

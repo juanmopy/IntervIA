@@ -9,6 +9,7 @@ import {
   computed,
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 /**
  * Chat message model
@@ -32,7 +33,7 @@ export interface InterviewProgress {
 @Component({
   selector: 'app-chat-panel',
   standalone: true,
-  imports: [DatePipe],
+  imports: [DatePipe, TranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="chat-panel flex flex-col h-full bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
@@ -44,7 +45,7 @@ export interface InterviewProgress {
               {{ progress()!.phase }}
             </span>
             <span class="text-xs font-medium text-slate-500 dark:text-slate-400">
-              Question {{ progress()!.questionNumber }} of {{ progress()!.totalQuestions }}
+              {{ 'INTERVIEW.QUESTION_PROGRESS' | translate:{current: progress()!.questionNumber, total: progress()!.totalQuestions} }}
             </span>
           </div>
           <!-- Progress bar -->
@@ -134,7 +135,7 @@ export interface InterviewProgress {
                 d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
             <p class="text-sm text-slate-400 dark:text-slate-500">
-              Interview will start shortly...
+              {{ 'INTERVIEW.STARTING_SHORTLY' | translate }}
             </p>
           </div>
         }
