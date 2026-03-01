@@ -5,17 +5,19 @@
     "HISTORY": "History"
   },
   "HOME": {
-    "BADGE": "AI-Powered Interview Practice",
-    "TITLE": "Practice Job Interviews",
-    "TITLE_HIGHLIGHT": "with a 3D AI Interviewer",
-    "DESCRIPTION": "Get real-time feedback on your interview skills with our AI-powered simulator. Practice technical, behavioral, and mixed interviews with a realistic 3D avatar.",
-    "START": "Start Interview"
+    "BADGE": "AI-Powered Mock Interviews",
+    "TITLE": "Practice Your Next",
+    "TITLE_HIGHLIGHT": "Interview",
+    "DESCRIPTION": "Get realistic interview practice with an AI interviewer, 3D avatar, and real-time voice interaction. Receive instant feedback to improve your skills.",
+    "START": "Start Interview",
+    "CONFIGURE_TITLE": "Configure Your Session",
+    "CONFIGURE_SUBTITLE": "Set up your mock interview preferences"
   },
   "CONFIG": {
     "TITLE": "Configure Your Interview",
     "ROLE_LABEL": "Job Role",
-    "ROLE_PLACEHOLDER": "e.g. Frontend Developer",
-    "ROLE_REQUIRED": "Job role is required",
+    "ROLE_PLACEHOLDER": "e.g. Frontend Developer, Data Scientist...",
+    "ROLE_REQUIRED": "Please enter a job role",
     "TYPE_LABEL": "Interview Type",
     "TYPE_TECHNICAL": "Technical",
     "TYPE_BEHAVIORAL": "Behavioral",
@@ -25,12 +27,17 @@
     "DIFFICULTY_MID": "Mid",
     "DIFFICULTY_SENIOR": "Senior",
     "LANGUAGE_LABEL": "Language",
+    "LANG_EN": "English",
+    "LANG_ES": "Español",
     "QUESTIONS_LABEL": "Number of Questions",
-    "RESUME_LABEL": "Resume / CV Text",
-    "RESUME_PLACEHOLDER": "Paste your resume text here (optional)",
+    "RESUME_LABEL": "Resume / CV",
+    "RESUME_OPTIONAL": "(optional — paste text)",
+    "RESUME_PLACEHOLDER": "Paste your resume text here...",
     "JOB_DESC_LABEL": "Job Description",
-    "JOB_DESC_PLACEHOLDER": "Paste the job description here (optional)",
-    "SUBMIT": "Start Interview"
+    "JOB_DESC_OPTIONAL": "(optional)",
+    "JOB_DESC_PLACEHOLDER": "Paste the job description here...",
+    "SUBMIT": "Start Interview",
+    "SUBMITTING": "Starting Interview..."
   },
   "INTERVIEW": {
     "QUESTION_PROGRESS": "Question {{current}} of {{total}}",
@@ -38,33 +45,72 @@
     "SEND": "Send",
     "END_INTERVIEW": "End Interview",
     "PLACEHOLDER": "Type your answer...",
-    "WEBGL_FALLBACK": "3D avatar not available. Using text-only mode.",
-    "LOADING": "Loading avatar..."
+    "WEBGL_FALLBACK": "3D avatar unavailable — text-only mode",
+    "LOADING": "Loading avatar...",
+    "PROCESSING": "Processing...",
+    "ACTIVE": "Interview Active",
+    "ENDING": "Ending...",
+    "FINISH": "✓ Finish Interview",
+    "STARTING_SHORTLY": "Interview will start shortly...",
+    "VOICE": "Voice",
+    "TEXT": "Text",
+    "VOICE_NOT_SUPPORTED": "Voice input is not supported in this browser. Use text mode instead.",
+    "TYPE_RESPONSE": "Type your response...",
+    "SEND_MESSAGE": "Send message",
+    "STOP_RECORDING": "Stop recording",
+    "START_RECORDING": "Start recording",
+    "AVATAR_FAILED": "Failed to load avatar",
+    "RETRY": "Retry",
+    "SPEAKING": "Speaking",
+    "SR_INTERVIEWER_SAYS": "Interviewer says: {{text}}",
+    "PROCESSING_ARIA": "Processing response",
+    "ACTIVE_ARIA": "Interview active"
   },
   "REPORT": {
     "TITLE": "Interview Report",
     "OVERALL_SCORE": "Overall Score",
     "STRENGTHS": "Strengths",
-    "IMPROVEMENTS": "Areas for Improvement",
+    "IMPROVEMENTS": "Areas to Improve",
     "QUESTION_BREAKDOWN": "Question Breakdown",
     "SCORE": "Score",
     "FEEDBACK": "Feedback",
     "RESOURCES": "Suggested Resources",
     "TRY_AGAIN": "Try Again",
     "DOWNLOAD_PDF": "Download PDF",
-    "NO_REPORT": "No report available. Complete an interview first."
+    "NO_REPORT": "No report available.",
+    "LEVEL": "Level",
+    "START_NEW": "Start a new interview",
+    "START_NEW_INTERVIEW": "Start New Interview"
   },
   "HISTORY": {
     "TITLE": "Interview History",
     "EMPTY": "No interviews yet. Start your first interview!",
     "CLEAR_ALL": "Clear All",
-    "CONFIRM_CLEAR": "Confirm Clear",
+    "CONFIRM_CLEAR": "Confirm Clear All?",
     "DELETE": "Delete",
-    "SCORE": "Score"
+    "DELETE_ARIA": "Delete interview",
+    "SCORE": "Score",
+    "PAST_INTERVIEW": "past interview",
+    "PAST_INTERVIEWS": "past interviews",
+    "NO_INTERVIEWS": "No interviews yet",
+    "START_FIRST": "Start your first interview",
+    "BACK": "Back to History",
+    "NOT_FOUND": "Interview not found."
   },
   "THEME": {
     "TOGGLE": "Toggle theme",
     "LIGHT": "Light",
     "DARK": "Dark"
+  },
+  "ERRORS": {
+    "FAILED_RESPONSE": "Failed to get response. Please try again.",
+    "SESSION_EXPIRED": "Session expired. Please start a new interview.",
+    "SESSION_ENDED": "Interview session has ended.",
+    "RATE_LIMITED": "Rate limited. Please wait a moment and try again.",
+    "SERVER_ERROR": "Server error. Please check the backend is running.",
+    "WELCOME_FALLBACK": "Hello! Welcome to your interview. Let's get started.",
+    "SESSION_ENDED_REDIRECT": "Interview session ended. Redirecting...",
+    "SERVER_ERROR_EVAL": "Server error generating evaluation. Please try again.",
+    "FAILED_END": "Failed to end interview. Please try again."
   }
 }

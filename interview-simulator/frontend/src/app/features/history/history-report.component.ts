@@ -1,12 +1,13 @@
 import { Component, inject, signal, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe, TitleCasePipe } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { StorageService, type StoredInterview } from '@core/services/storage.service';
 
 @Component({
   selector: 'app-history-report',
   standalone: true,
-  imports: [DatePipe, TitleCasePipe],
+  imports: [DatePipe, TitleCasePipe, TranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-primary-50
@@ -25,14 +26,14 @@ import { StorageService, type StoredInterview } from '@core/services/storage.ser
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
-            Back to History
+            {{ 'HISTORY.BACK' | translate }}
           </button>
 
           <!-- Header -->
           <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Interview Report</h1>
+            <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">{{ 'REPORT.TITLE' | translate }}</h1>
             <p class="text-slate-500 dark:text-slate-400">
-              {{ iv.role }} — {{ iv.difficulty | titlecase }} Level
+              {{ iv.role }} — {{ iv.difficulty | titlecase }} {{ 'REPORT.LEVEL' | translate }}
             </p>
             <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">
               {{ iv.date | date:'MMMM d, yyyy · HH:mm' }} · {{ iv.type | titlecase }}
@@ -54,7 +55,7 @@ import { StorageService, type StoredInterview } from '@core/services/storage.ser
               </svg>
               <div class="absolute inset-0 flex flex-col items-center justify-center">
                 <span class="text-4xl font-bold text-slate-800 dark:text-white">{{ iv.report.overallScore }}</span>
-                <span class="text-xs text-slate-400 uppercase tracking-wide">Score</span>
+                <span class="text-xs text-slate-400 uppercase tracking-wide">{{ 'REPORT.SCORE' | translate }}</span>
               </div>
             </div>
           </div>
@@ -68,7 +69,7 @@ import { StorageService, type StoredInterview } from '@core/services/storage.ser
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <h3 class="text-sm font-semibold text-green-700 dark:text-green-300 uppercase tracking-wide">Strengths</h3>
+                <h3 class="text-sm font-semibold text-green-700 dark:text-green-300 uppercase tracking-wide">{{ 'REPORT.STRENGTHS' | translate }}</h3>
               </div>
               <ul class="space-y-2">
                 @for (s of iv.report.strengths; track s) {
@@ -88,7 +89,7 @@ import { StorageService, type StoredInterview } from '@core/services/storage.ser
                       d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
                   </svg>
                 </div>
-                <h3 class="text-sm font-semibold text-amber-700 dark:text-amber-300 uppercase tracking-wide">Areas to Improve</h3>
+                <h3 class="text-sm font-semibold text-amber-700 dark:text-amber-300 uppercase tracking-wide">{{ 'REPORT.IMPROVEMENTS' | translate }}</h3>
               </div>
               <ul class="space-y-2">
                 @for (i of iv.report.improvements; track i) {
@@ -104,7 +105,7 @@ import { StorageService, type StoredInterview } from '@core/services/storage.ser
           <!-- Question Breakdown -->
           @if (iv.report.questionScores && iv.report.questionScores.length > 0) {
             <div class="mb-8">
-              <h2 class="text-lg font-semibold text-slate-800 dark:text-white mb-4">Question Breakdown</h2>
+              <h2 class="text-lg font-semibold text-slate-800 dark:text-white mb-4">{{ 'REPORT.QUESTION_BREAKDOWN' | translate }}</h2>
               <div class="space-y-3">
                 @for (q of iv.report.questionScores; track $index) {
                   <div class="bg-white dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 p-4">
@@ -130,7 +131,7 @@ import { StorageService, type StoredInterview } from '@core/services/storage.ser
           <!-- Suggested Resources -->
           @if (iv.report.suggestedResources && iv.report.suggestedResources.length > 0) {
             <div class="mb-8">
-              <h2 class="text-lg font-semibold text-slate-800 dark:text-white mb-3">Suggested Resources</h2>
+              <h2 class="text-lg font-semibold text-slate-800 dark:text-white mb-3">{{ 'REPORT.RESOURCES' | translate }}</h2>
               <div class="bg-white dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 p-4">
                 <ul class="space-y-2">
                   @for (res of iv.report.suggestedResources; track res) {
@@ -155,7 +156,7 @@ import { StorageService, type StoredInterview } from '@core/services/storage.ser
                      rounded-xl shadow-lg shadow-primary-500/20 transition-all"
               (click)="startNew()"
             >
-              Start New Interview
+              {{ 'REPORT.START_NEW_INTERVIEW' | translate }}
             </button>
             <button
               type="button"
@@ -164,20 +165,20 @@ import { StorageService, type StoredInterview } from '@core/services/storage.ser
                      hover:bg-slate-50 dark:hover:bg-slate-700 rounded-xl transition-all"
               (click)="downloadPdf()"
             >
-              Download PDF
+              {{ 'REPORT.DOWNLOAD_PDF' | translate }}
             </button>
           </div>
 
         } @else {
           <!-- Not found -->
           <div class="text-center py-16">
-            <p class="text-slate-400 dark:text-slate-500 mb-4">Interview not found.</p>
+            <p class="text-slate-400 dark:text-slate-500 mb-4">{{ 'HISTORY.NOT_FOUND' | translate }}</p>
             <button
               type="button"
               class="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-700"
               (click)="goBack()"
             >
-              Back to History
+              {{ 'HISTORY.BACK' | translate }}
             </button>
           </div>
         }

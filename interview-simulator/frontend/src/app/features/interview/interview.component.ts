@@ -9,6 +9,7 @@ import {
   HostListener,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AvatarCanvasComponent } from './avatar-canvas.component';
 import { ChatPanelComponent, type ChatMessage, type InterviewProgress } from './chat-panel.component';
 import { VoiceControlsComponent } from './voice-controls.component';
@@ -20,7 +21,7 @@ let messageIdCounter = 0;
 @Component({
   selector: 'app-interview',
   standalone: true,
-  imports: [AvatarCanvasComponent, ChatPanelComponent, VoiceControlsComponent],
+  imports: [AvatarCanvasComponent, ChatPanelComponent, VoiceControlsComponent, TranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="interview-layout h-[calc(100dvh-3.5rem)] flex flex-col bg-slate-100 dark:bg-slate-900 overflow-hidden"
@@ -38,9 +39,9 @@ let messageIdCounter = 0;
         <div class="flex items-center gap-2" aria-live="polite">
           <div class="w-2 h-2 rounded-full animate-pulse"
                [class]="isProcessing() ? 'bg-amber-500' : 'bg-green-500'"
-               [attr.aria-label]="isProcessing() ? 'Processing response' : 'Interview active'"></div>
+               [attr.aria-label]="(isProcessing() ? 'INTERVIEW.PROCESSING_ARIA' : 'INTERVIEW.ACTIVE_ARIA') | translate"></div>
           <span class="text-sm font-medium text-slate-600 dark:text-slate-300">
-            {{ isProcessing() ? 'Processing...' : 'Interview Active' }}
+            {{ (isProcessing() ? 'INTERVIEW.PROCESSING' : 'INTERVIEW.ACTIVE') | translate }}
           </span>
         </div>
 
@@ -69,7 +70,7 @@ let messageIdCounter = 0;
                 </svg>
               </div>
               <p class="text-sm text-slate-500 dark:text-slate-400 text-center px-4">
-                3D avatar unavailable — text-only mode
+                {{ 'INTERVIEW.WEBGL_FALLBACK' | translate }}
               </p>
             </div>
           }
@@ -103,9 +104,9 @@ let messageIdCounter = 0;
                   : 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 border border-red-200 dark:border-red-800'"
                 (click)="endInterview()"
                 [disabled]="isEnding()"
-                aria-label="End interview"
+                [attr.aria-label]="'INTERVIEW.END_INTERVIEW' | translate"
               >
-                {{ isEnding() ? 'Ending...' : isClosingPhase() ? '✓ Finish Interview' : 'End Interview' }}
+                {{ (isEnding() ? 'INTERVIEW.ENDING' : isClosingPhase() ? 'INTERVIEW.FINISH' : 'INTERVIEW.END_INTERVIEW') | translate }}
               </button>
             </div>
           </div>
@@ -142,6 +143,7 @@ export class InterviewComponent implements OnInit, OnDestroy {
   private readonly stateService = inject(InterviewStateService);
   private readonly avatarService = inject(AvatarService);
   private readonly router = inject(Router);
+  private readonly translate = inject(TranslateService);
 
   /* ── Signals for template ──────────────────────────────── */
   readonly messages = signal<ChatMessage[]>([]);
@@ -208,7 +210,7 @@ export class InterviewComponent implements OnInit, OnDestroy {
       this.handleBackendResponse(cached);
     } else {
       // Fallback: if no cached response, show generic welcome
-      this.addMessage('interviewer', 'Hello! Welcome to your interview. Let\'s get started.');
+      this.addMessage('interviewer', this.translate.instant('ERRORS.WELCOME_FALLBACK'));
     }
   }
 
@@ -232,17 +234,17 @@ export class InterviewComponent implements OnInit, OnDestroy {
       console.error('[Interview] sendMessage failed:', err);
 
       // Provide a more descriptive error message
-      let errorText = 'Failed to get response. Please try again.';
+      let errorText = this.translate.instant('ERRORS.FAILED_RESPONSE');
       if (err && typeof err === 'object' && 'status' in err) {
         const status = (err as { status: number }).status;
         if (status === 404) {
-          errorText = 'Session expired. Please start a new interview.';
+          errorText = this.translate.instant('ERRORS.SESSION_EXPIRED');
         } else if (status === 400) {
-          errorText = 'Interview session has ended.';
+          errorText = this.translate.instant('ERRORS.SESSION_ENDED');
         } else if (status === 429) {
-          errorText = 'Rate limited. Please wait a moment and try again.';
+          errorText = this.translate.instant('ERRORS.RATE_LIMITED');
         } else if (status === 0 || status >= 500) {
-          errorText = 'Server error. Please check the backend is running.';
+          errorText = this.translate.instant('ERRORS.SERVER_ERROR');
         }
       }
       this.showError(errorText);
@@ -270,7 +272,7 @@ export class InterviewComponent implements OnInit, OnDestroy {
       this.addMessage('interviewer', msg.text);
 
       // Screen reader announcement
-      this.srAnnouncement.set(`Interviewer says: ${msg.text}`);
+      this.srAnnouncement.set(this.translate.instant('INTERVIEW.SR_INTERVIEWER_SAYS', { text: msg.text }));
 
       // Speak via avatar (or TTS fallback)
       if (this.avatarCanvas && !this.webglFailed()) {
@@ -310,22 +312,22 @@ export class InterviewComponent implements OnInit, OnDestroy {
         }
         if (status === 400) {
           // Session ended but no report cached — go home
-          this.showError('Interview session ended. Redirecting...');
+          this.showError(this.translate.instant('ERRORS.SESSION_ENDED_REDIRECT'));
           setTimeout(() => this.router.navigate(['/']), 1500);
           return;
         }
         if (status === 404) {
-          this.showError('Session expired. Please start a new interview.');
+          this.showError(this.translate.instant('ERRORS.SESSION_EXPIRED'));
           this.isEnding.set(false);
           return;
         }
         if (status === 0 || status >= 500) {
-          this.showError('Server error generating evaluation. Please try again.');
+          this.showError(this.translate.instant('ERRORS.SERVER_ERROR_EVAL'));
           this.isEnding.set(false);
           return;
         }
       }
-      this.showError('Failed to end interview. Please try again.');
+      this.showError(this.translate.instant('ERRORS.FAILED_END'));
       this.isEnding.set(false);
     }
   }

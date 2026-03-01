@@ -11,10 +11,12 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { AvatarService, type SpeakPayload, type AvatarAction } from '@core/services/avatar.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-avatar-canvas',
   standalone: true,
+  imports: [TranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="avatar-wrapper relative w-full h-full min-h-[300px] bg-surface-light dark:bg-surface-dark rounded-2xl overflow-hidden">
@@ -23,7 +25,7 @@ import { AvatarService, type SpeakPayload, type AvatarAction } from '@core/servi
         <div class="absolute inset-0 flex flex-col items-center justify-center gap-4 z-10 bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-sm">
           <div class="avatar-skeleton w-32 h-32 rounded-full bg-gradient-to-br from-primary-200 to-primary-400 dark:from-primary-700 dark:to-primary-900 animate-pulse"></div>
           <div class="flex flex-col items-center gap-2">
-            <p class="text-sm font-medium text-primary-700 dark:text-primary-300">Loading avatar...</p>
+            <p class="text-sm font-medium text-primary-700 dark:text-primary-300">{{ 'INTERVIEW.LOADING' | translate }}</p>
             <div class="w-48 h-2 bg-primary-100 dark:bg-primary-800 rounded-full overflow-hidden">
               <div
                 class="h-full bg-primary-500 rounded-full transition-all duration-300"
@@ -43,13 +45,13 @@ import { AvatarService, type SpeakPayload, type AvatarAction } from '@core/servi
               d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
           </svg>
           <p class="text-sm text-red-500 dark:text-red-400 text-center px-4">
-            {{ avatarService.error() || 'Failed to load avatar' }}
+            {{ avatarService.error() || ('INTERVIEW.AVATAR_FAILED' | translate) }}
           </p>
           <button
             class="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors"
             (click)="retryLoad()"
           >
-            Retry
+            {{ 'INTERVIEW.RETRY' | translate }}
           </button>
         </div>
       }
@@ -62,7 +64,7 @@ import { AvatarService, type SpeakPayload, type AvatarAction } from '@core/servi
             <span class="w-1 h-3 bg-white rounded-full animate-[soundbar_0.6s_ease-in-out_0.1s_infinite]"></span>
             <span class="w-1 h-3 bg-white rounded-full animate-[soundbar_0.6s_ease-in-out_0.2s_infinite]"></span>
           </span>
-          Speaking
+          {{ 'INTERVIEW.SPEAKING' | translate }}
         </div>
       }
 

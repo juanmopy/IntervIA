@@ -5,16 +5,18 @@
     "HISTORY": "Historial"
   },
   "HOME": {
-    "BADGE": "Práctica de Entrevistas con IA",
-    "TITLE": "Practica Entrevistas de Trabajo",
-    "TITLE_HIGHLIGHT": "con un Entrevistador 3D con IA",
-    "DESCRIPTION": "Obtén retroalimentación en tiempo real sobre tus habilidades de entrevista con nuestro simulador impulsado por IA. Practica entrevistas técnicas, conductuales y mixtas con un avatar 3D realista.",
-    "START": "Iniciar Entrevista"
+    "BADGE": "Entrevistas Simuladas con IA",
+    "TITLE": "Practica Tu Próxima",
+    "TITLE_HIGHLIGHT": "Entrevista",
+    "DESCRIPTION": "Practica entrevistas realistas con un entrevistador IA, avatar 3D e interacción por voz en tiempo real. Recibe retroalimentación instantánea para mejorar tus habilidades.",
+    "START": "Iniciar Entrevista",
+    "CONFIGURE_TITLE": "Configura Tu Sesión",
+    "CONFIGURE_SUBTITLE": "Configura tus preferencias de entrevista simulada"
   },
   "CONFIG": {
     "TITLE": "Configura Tu Entrevista",
     "ROLE_LABEL": "Puesto de Trabajo",
-    "ROLE_PLACEHOLDER": "ej. Desarrollador Frontend",
+    "ROLE_PLACEHOLDER": "ej. Desarrollador Frontend, Científico de Datos...",
     "ROLE_REQUIRED": "El puesto de trabajo es obligatorio",
     "TYPE_LABEL": "Tipo de Entrevista",
     "TYPE_TECHNICAL": "Técnica",
@@ -25,12 +27,17 @@
     "DIFFICULTY_MID": "Mid",
     "DIFFICULTY_SENIOR": "Senior",
     "LANGUAGE_LABEL": "Idioma",
+    "LANG_EN": "English",
+    "LANG_ES": "Español",
     "QUESTIONS_LABEL": "Número de Preguntas",
-    "RESUME_LABEL": "Texto del Currículum / CV",
-    "RESUME_PLACEHOLDER": "Pega el texto de tu currículum aquí (opcional)",
+    "RESUME_LABEL": "Currículum / CV",
+    "RESUME_OPTIONAL": "(opcional — pega texto)",
+    "RESUME_PLACEHOLDER": "Pega el texto de tu currículum aquí...",
     "JOB_DESC_LABEL": "Descripción del Puesto",
-    "JOB_DESC_PLACEHOLDER": "Pega la descripción del puesto aquí (opcional)",
-    "SUBMIT": "Iniciar Entrevista"
+    "JOB_DESC_OPTIONAL": "(opcional)",
+    "JOB_DESC_PLACEHOLDER": "Pega la descripción del puesto aquí...",
+    "SUBMIT": "Iniciar Entrevista",
+    "SUBMITTING": "Iniciando Entrevista..."
   },
   "INTERVIEW": {
     "QUESTION_PROGRESS": "Pregunta {{current}} de {{total}}",
@@ -38,8 +45,26 @@
     "SEND": "Enviar",
     "END_INTERVIEW": "Terminar Entrevista",
     "PLACEHOLDER": "Escribe tu respuesta...",
-    "WEBGL_FALLBACK": "Avatar 3D no disponible. Usando modo solo texto.",
-    "LOADING": "Cargando avatar..."
+    "WEBGL_FALLBACK": "Avatar 3D no disponible — modo solo texto",
+    "LOADING": "Cargando avatar...",
+    "PROCESSING": "Procesando...",
+    "ACTIVE": "Entrevista Activa",
+    "ENDING": "Finalizando...",
+    "FINISH": "✓ Finalizar Entrevista",
+    "STARTING_SHORTLY": "La entrevista comenzará en breve...",
+    "VOICE": "Voz",
+    "TEXT": "Texto",
+    "VOICE_NOT_SUPPORTED": "La entrada de voz no es compatible con este navegador. Usa el modo texto.",
+    "TYPE_RESPONSE": "Escribe tu respuesta...",
+    "SEND_MESSAGE": "Enviar mensaje",
+    "STOP_RECORDING": "Detener grabación",
+    "START_RECORDING": "Iniciar grabación",
+    "AVATAR_FAILED": "Error al cargar el avatar",
+    "RETRY": "Reintentar",
+    "SPEAKING": "Hablando",
+    "SR_INTERVIEWER_SAYS": "El entrevistador dice: {{text}}",
+    "PROCESSING_ARIA": "Procesando respuesta",
+    "ACTIVE_ARIA": "Entrevista activa"
   },
   "REPORT": {
     "TITLE": "Reporte de Entrevista",
@@ -52,19 +77,40 @@
     "RESOURCES": "Recursos Sugeridos",
     "TRY_AGAIN": "Intentar de Nuevo",
     "DOWNLOAD_PDF": "Descargar PDF",
-    "NO_REPORT": "No hay reporte disponible. Completa una entrevista primero."
+    "NO_REPORT": "No hay reporte disponible.",
+    "LEVEL": "Nivel",
+    "START_NEW": "Iniciar una nueva entrevista",
+    "START_NEW_INTERVIEW": "Iniciar Nueva Entrevista"
   },
   "HISTORY": {
     "TITLE": "Historial de Entrevistas",
     "EMPTY": "Aún no tienes entrevistas. ¡Inicia tu primera entrevista!",
     "CLEAR_ALL": "Borrar Todo",
-    "CONFIRM_CLEAR": "Confirmar Borrado",
+    "CONFIRM_CLEAR": "¿Confirmar borrar todo?",
     "DELETE": "Eliminar",
-    "SCORE": "Puntuación"
+    "DELETE_ARIA": "Eliminar entrevista",
+    "SCORE": "Puntuación",
+    "PAST_INTERVIEW": "entrevista pasada",
+    "PAST_INTERVIEWS": "entrevistas pasadas",
+    "NO_INTERVIEWS": "Aún no hay entrevistas",
+    "START_FIRST": "Inicia tu primera entrevista",
+    "BACK": "Volver al Historial",
+    "NOT_FOUND": "Entrevista no encontrada."
   },
   "THEME": {
     "TOGGLE": "Cambiar tema",
     "LIGHT": "Claro",
     "DARK": "Oscuro"
+  },
+  "ERRORS": {
+    "FAILED_RESPONSE": "Error al obtener respuesta. Inténtalo de nuevo.",
+    "SESSION_EXPIRED": "Sesión expirada. Inicia una nueva entrevista.",
+    "SESSION_ENDED": "La sesión de entrevista ha terminado.",
+    "RATE_LIMITED": "Límite de peticiones alcanzado. Espera un momento e inténtalo de nuevo.",
+    "SERVER_ERROR": "Error del servidor. Verifica que el backend esté funcionando.",
+    "WELCOME_FALLBACK": "¡Hola! Bienvenido/a a tu entrevista. ¡Comencemos!",
+    "SESSION_ENDED_REDIRECT": "Sesión de entrevista finalizada. Redirigiendo...",
+    "SERVER_ERROR_EVAL": "Error del servidor al generar la evaluación. Inténtalo de nuevo.",
+    "FAILED_END": "Error al finalizar la entrevista. Inténtalo de nuevo."
   }
 }
