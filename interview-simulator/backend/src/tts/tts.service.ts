@@ -20,7 +20,7 @@ export class TtsService {
    * Falls back to text-only mode if Google TTS is unavailable.
    */
   async synthesize(request: TtsRequest): Promise<TtsResponse> {
-    const { text, language = 'en-US', gender = 'male' } = request;
+    const { text, language = 'en-US', gender = 'female' } = request;
 
     try {
       return await this.synthesizeWithGoogle(text, language, gender);
