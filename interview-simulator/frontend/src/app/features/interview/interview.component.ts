@@ -15,6 +15,7 @@ import { ChatPanelComponent, type ChatMessage, type InterviewProgress } from './
 import { VoiceControlsComponent } from './voice-controls.component';
 import { InterviewStateService, type SendMessageResponse } from '@core/services/interview-state.service';
 import { AvatarService } from '@core/services/avatar.service';
+import { TtsService } from '@core/services/tts.service';
 
 let messageIdCounter = 0;
 
@@ -142,6 +143,7 @@ export class InterviewComponent implements OnInit, OnDestroy {
 
   private readonly stateService = inject(InterviewStateService);
   private readonly avatarService = inject(AvatarService);
+  private readonly ttsService = inject(TtsService);
   private readonly router = inject(Router);
   private readonly translate = inject(TranslateService);
 
@@ -187,10 +189,10 @@ export class InterviewComponent implements OnInit, OnDestroy {
       const msgs = this.messages();
       const lastInterviewer = [...msgs].reverse().find(m => m.role === 'interviewer');
       if (lastInterviewer && this.avatarCanvas) {
-        this.avatarCanvas.speakText(lastInterviewer.text);
+        this.speakWithTts(lastInterviewer.text);
       }
     } catch (err) {
-      console.warn('[Interview] Avatar speakText on ready failed:', err);
+      console.warn('[Interview] Avatar speak on ready failed:', err);
     }
   }
 
@@ -274,12 +276,12 @@ export class InterviewComponent implements OnInit, OnDestroy {
       // Screen reader announcement
       this.srAnnouncement.set(this.translate.instant('INTERVIEW.SR_INTERVIEWER_SAYS', { text: msg.text }));
 
-      // Speak via avatar (or TTS fallback)
+      // Speak via avatar with backend TTS + visemes (fallback to Web Speech)
       if (this.avatarCanvas && !this.webglFailed()) {
-        this.avatarCanvas.speakText(msg.text);
         if (msg.facialExpression) {
           this.avatarCanvas.setMood(msg.facialExpression);
         }
+        this.speakWithTts(msg.text, msg.facialExpression);
       }
     }
 
@@ -288,6 +290,32 @@ export class InterviewComponent implements OnInit, OnDestroy {
     if (response.metadata?.phase === 'closing') {
       this.isClosingPhase.set(true);
     }
+  }
+
+  /**
+   * Speak text via backend TTS (audio + visemes) with Web Speech fallback.
+   */
+  private async speakWithTts(text: string, facialExpression?: string): Promise<void> {
+    if (!this.avatarCanvas) return;
+
+    const lang = (this.language === 'es' ? 'es' : 'en') as 'en' | 'es';
+
+    try {
+      const payload = await this.ttsService.synthesize(text, lang, 'female');
+
+      if (payload) {
+        // Use backend audio + visemes for precise lip sync
+        await this.avatarCanvas.speak(payload, {
+          facialExpression,
+        });
+        return;
+      }
+    } catch (err) {
+      console.warn('[Interview] Backend TTS failed, falling back to Web Speech:', err);
+    }
+
+    // Fallback: browser Web Speech API (no lip sync)
+    this.avatarCanvas.speakText(text);
   }
 
   /**
