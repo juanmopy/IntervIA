@@ -186,7 +186,16 @@ export class VoiceControlsComponent implements OnInit, OnDestroy {
   /** Waveform bar multipliers for visual effect */
   readonly waveformBars = [0.4, 0.7, 1, 0.8, 0.5, 0.9, 0.6, 1, 0.7, 0.4];
 
+  /**
+   * Silence timeout in ms — how long to wait after the last final result
+   * before automatically sending the accumulated transcript.
+   * A longer value gives the user more time to pause between phrases.
+   */
+  private readonly SILENCE_TIMEOUT_MS = 2500;
+
   private resultSub?: Subscription;
+  private silenceTimer?: ReturnType<typeof setTimeout>;
+  private accumulatedTranscript = '';
 
   ngOnInit(): void {
     // Auto-fallback to text mode if voice not supported
@@ -194,17 +203,23 @@ export class VoiceControlsComponent implements OnInit, OnDestroy {
       this.mode.set('text');
     }
 
-    // Subscribe to final voice results
+    // Subscribe to voice results and accumulate them;
+    // only send after a silence gap (no new final results for SILENCE_TIMEOUT_MS)
     this.resultSub = this.voiceService.onResult$.subscribe((result) => {
       if (result.isFinal && result.transcript.trim()) {
-        this.messageSent.emit(result.transcript.trim());
-        // Stop after getting a final result
-        this.voiceService.stopListening();
+        // Append the new chunk to the accumulated transcript
+        this.accumulatedTranscript = this.accumulatedTranscript
+          ? `${this.accumulatedTranscript} ${result.transcript.trim()}`
+          : result.transcript.trim();
+
+        // Reset the silence timer — the user may still be speaking
+        this.resetSilenceTimer();
       }
     });
   }
 
   ngOnDestroy(): void {
+    this.clearSilenceTimer();
     this.resultSub?.unsubscribe();
     this.voiceService.stopListening();
   }
@@ -214,6 +229,7 @@ export class VoiceControlsComponent implements OnInit, OnDestroy {
 
     // Stop listening if switching away from voice
     if (this.mode() === 'voice') {
+      this.flushAccumulated();
       this.voiceService.stopListening();
     }
 
@@ -222,10 +238,46 @@ export class VoiceControlsComponent implements OnInit, OnDestroy {
 
   toggleMic(): void {
     if (this.voiceService.isListening()) {
+      // User manually stops → send whatever was accumulated immediately
+      this.flushAccumulated();
       this.voiceService.stopListening();
     } else {
+      this.accumulatedTranscript = '';
       this.voiceService.startListening();
     }
+  }
+
+  /* ── Private helpers ──────────────────────────────────────── */
+
+  /**
+   * (Re)start the silence timer.
+   * When it fires the accumulated transcript is sent and listening stops.
+   */
+  private resetSilenceTimer(): void {
+    this.clearSilenceTimer();
+    this.silenceTimer = setTimeout(() => {
+      this.flushAccumulated();
+      this.voiceService.stopListening();
+    }, this.SILENCE_TIMEOUT_MS);
+  }
+
+  private clearSilenceTimer(): void {
+    if (this.silenceTimer) {
+      clearTimeout(this.silenceTimer);
+      this.silenceTimer = undefined;
+    }
+  }
+
+  /**
+   * Send whatever has been accumulated so far and reset buffer.
+   */
+  private flushAccumulated(): void {
+    this.clearSilenceTimer();
+    const text = this.accumulatedTranscript.trim();
+    if (text) {
+      this.messageSent.emit(text);
+    }
+    this.accumulatedTranscript = '';
   }
 
   sendText(): void {
