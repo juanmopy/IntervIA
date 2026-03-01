@@ -146,8 +146,8 @@ export class AvatarCanvasComponent implements AfterViewInit, OnDestroy {
   /**
    * Fallback: speak with built-in TTS.
    */
-  speakText(text: string): void {
-    this.avatarService.speakText(text, this.language);
+  speakText(text: string): Promise<void> {
+    return this.avatarService.speakText(text, this.language);
   }
 
   /**

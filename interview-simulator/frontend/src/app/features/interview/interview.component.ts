@@ -259,7 +259,7 @@ export class InterviewComponent implements OnInit, OnDestroy {
   /**
    * Handle backend response: add messages, update progress, speak via avatar.
    */
-  private handleBackendResponse(response: SendMessageResponse): void {
+  private async handleBackendResponse(response: SendMessageResponse): Promise<void> {
     // Update progress
     if (response.metadata) {
       this.progress.set({
@@ -269,7 +269,8 @@ export class InterviewComponent implements OnInit, OnDestroy {
       });
     }
 
-    // Add interviewer messages
+    // Add interviewer messages and speak them sequentially
+    // (await each so multi-paragraph responses sync lips for every part)
     for (const msg of response.messages) {
       this.addMessage('interviewer', msg.text);
 
@@ -281,7 +282,7 @@ export class InterviewComponent implements OnInit, OnDestroy {
         if (msg.facialExpression) {
           this.avatarCanvas.setMood(msg.facialExpression);
         }
-        this.speakWithTts(msg.text, msg.facialExpression);
+        await this.speakWithTts(msg.text, msg.facialExpression);
       }
     }
 
@@ -314,8 +315,8 @@ export class InterviewComponent implements OnInit, OnDestroy {
       console.warn('[Interview] Backend TTS failed, falling back to Web Speech:', err);
     }
 
-    // Fallback: browser Web Speech API (no lip sync)
-    this.avatarCanvas.speakText(text);
+    // Fallback: browser Web Speech API with lip sync animation
+    await this.avatarCanvas.speakText(text);
   }
 
   /**
