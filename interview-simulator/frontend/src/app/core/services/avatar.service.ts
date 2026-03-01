@@ -252,8 +252,11 @@ export class AvatarService {
     const ttsLang = lang?.startsWith('es') ? 'es-ES' : 'en-US';
 
     // ── Generate visemes using TalkingHead's lipsync module ──
-    const msPerWord = 250;
-    const totalDurationMs = rawWords.length * msPerWord + 500;
+    // SpeechSynthesis at rate 1.0 speaks ~150 wpm ≈ 400 ms/word.
+    // We intentionally overshoot so the animation never finishes before the voice;
+    // cleanup() calls stopSpeaking() when SpeechSynthesis ends to cut it.
+    const msPerWord = 450;
+    const totalDurationMs = rawWords.length * msPerWord + 2000;
 
     const words: string[] = [];
     const wtimes: number[] = [];
