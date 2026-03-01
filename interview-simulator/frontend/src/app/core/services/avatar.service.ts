@@ -83,7 +83,12 @@ export class AvatarService {
 
   /** Default TalkingHead options */
   private readonly defaultHeadOptions = {
-    ttsEndpoint: '',          // We handle TTS server-side
+    ttsEndpoint: '',          // Empty = use browser SpeechSynthesis as fallback
+    ttsLang: 'en-US',
+    ttsVoice: '',
+    ttsRate: 1.0,
+    ttsPitch: 1.0,
+    ttsVolume: 1.0,
     lipsyncLang: 'en',
     lipsyncModules: [] as string[],  // Disabled: Vite can't resolve TalkingHead's dynamic lipsync imports
     cameraView: 'upper' as const,
@@ -129,11 +134,13 @@ export class AvatarService {
       );
 
       const lang = language ?? 'en';
-      const lipsyncLang = lang.startsWith('es') ? 'en' : 'en';
+      const lipsyncLang = 'en'; // English lipsync works for both en/es
+      const ttsLang = lang.startsWith('es') ? 'es-ES' : 'en-US';
 
       this.head = new TalkingHead(container, {
         ...this.defaultHeadOptions,
         lipsyncLang,
+        ttsLang,
       });
 
       // Manually load lipsync module (Vite can't resolve TalkingHead's dynamic import)
@@ -221,42 +228,52 @@ export class AvatarService {
   }
 
   /**
-   * Make avatar speak using browser's native Web Speech API.
-   * TalkingHead's speakText requires a cloud TTS endpoint we don't have,
-   * so we bypass it and use SpeechSynthesis directly + avatar idle animations.
+   * Make avatar speak using TalkingHead's built-in speakText.
+   * When ttsEndpoint is empty, TalkingHead falls back to browser SpeechSynthesis
+   * but still generates visemes from text for lip sync animation.
    */
   speakText(text: string, lang?: string): void {
     if (!this.head) return;
-    if (!('speechSynthesis' in window)) {
-      console.warn('[AvatarService] SpeechSynthesis not supported');
-      return;
-    }
 
     this._state.set('speaking');
 
-    // Tell avatar to look at camera and animate while speaking
-    try { this.head.lookAtCamera?.(500); } catch { /* ignore */ }
-    try { this.head.speakWithHands?.(); } catch { /* ignore */ }
+    try {
+      const ttsLang = lang?.startsWith('es') ? 'es-ES' : 'en-US';
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = lang ?? 'en-US';
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
+      // Use TalkingHead's speakText which coordinates audio + lip sync
+      // Even without a cloud TTS endpoint, it uses browser SpeechSynthesis
+      // and generates visemes via the loaded lipsync module
+      this.head.speakText(text, {
+        ttsLang,
+        lipsyncLang: 'en',
+      });
 
-    utterance.onend = () => {
-      if (this._state() === 'speaking') {
+      // Poll for speech end to update state
+      this.waitForSpeechEnd().then(() => {
+        if (this._state() === 'speaking') {
+          this._state.set('ready');
+        }
+      });
+    } catch (err) {
+      console.warn('[AvatarService] TalkingHead speakText failed, trying direct SpeechSynthesis:', err);
+
+      // Ultimate fallback: browser speech without lip sync
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = lang?.startsWith('es') ? 'es-ES' : 'en-US';
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        utterance.onend = () => {
+          if (this._state() === 'speaking') this._state.set('ready');
+        };
+        utterance.onerror = () => {
+          if (this._state() === 'speaking') this._state.set('ready');
+        };
+        window.speechSynthesis.speak(utterance);
+      } else {
         this._state.set('ready');
       }
-    };
-
-    utterance.onerror = (e) => {
-      console.warn('[AvatarService] SpeechSynthesis error:', e.error);
-      if (this._state() === 'speaking') {
-        this._state.set('ready');
-      }
-    };
-
-    window.speechSynthesis.speak(utterance);
+    }
   }
 
   /**
