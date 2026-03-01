@@ -83,7 +83,7 @@ export class AvatarService {
 
   /** Default TalkingHead options */
   private readonly defaultHeadOptions = {
-    ttsEndpoint: null as string | null,   // null = don't use built-in TTS at all
+    ttsEndpoint: undefined,   // undefined = don't use built-in TTS at all
     ttsLang: 'en-US',
     lipsyncLang: 'en',
     lipsyncModules: [] as string[],  // Disabled: Vite can't resolve TalkingHead's dynamic lipsync imports
