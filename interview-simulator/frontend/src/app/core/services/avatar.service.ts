@@ -241,11 +241,11 @@ export class AvatarService {
    * We can't use head.speakText() because it requires a valid ttsEndpoint URL;
    * without one it tries fetch('') → gets HTML → SyntaxError on JSON.parse.
    */
-  speakText(text: string, lang?: string): void {
-    if (!this.head) return;
+  speakText(text: string, lang?: string): Promise<void> {
+    if (!this.head) return Promise.resolve();
 
     const rawWords = text.split(/\s+/).filter(Boolean);
-    if (rawWords.length === 0) return;
+    if (rawWords.length === 0) return Promise.resolve();
 
     this._state.set('speaking');
 
@@ -320,24 +320,27 @@ export class AvatarService {
     }
 
     // ── Play actual voice via browser SpeechSynthesis ──
-    const cleanup = () => {
-      try { this.head?.stopSpeaking(); } catch { /* ignore */ }
-      try { this.head?.setMixerGain(1); } catch { /* ignore */ }
-      if (this._state() === 'speaking') this._state.set('ready');
-    };
+    return new Promise<void>((resolve) => {
+      const cleanup = () => {
+        try { this.head?.stopSpeaking(); } catch { /* ignore */ }
+        try { this.head?.setMixerGain(1); } catch { /* ignore */ }
+        if (this._state() === 'speaking') this._state.set('ready');
+        resolve();
+      };
 
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = ttsLang;
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
-      utterance.onend = cleanup;
-      utterance.onerror = cleanup;
-      window.speechSynthesis.speak(utterance);
-    } else {
-      // No SpeechSynthesis — let the silent buffer animation run, then clean up
-      this.waitForSpeechEnd().then(cleanup);
-    }
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = ttsLang;
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        utterance.onend = cleanup;
+        utterance.onerror = cleanup;
+        window.speechSynthesis.speak(utterance);
+      } else {
+        // No SpeechSynthesis — let the silent buffer animation run, then clean up
+        this.waitForSpeechEnd().then(cleanup);
+      }
+    });
   }
 
   /**
